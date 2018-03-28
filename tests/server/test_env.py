@@ -15,7 +15,7 @@ BASE_DB_DIR = '/some/dir'
 base_environ = {
     'DB_DIRECTORY': BASE_DB_DIR,
     'DAEMON_URL': BASE_DAEMON_URL,
-    'COIN': 'BitcoinCash',
+    'COIN': 'XRJV1Cash',
 }
 
 def setup_base_env():
@@ -78,13 +78,13 @@ def test_COIN_NET():
     '''Test COIN and NET defaults and redirection.'''
     setup_base_env()
     e = Env()
-    assert e.coin == lib_coins.BitcoinCash
+    assert e.coin == lib_coins.XRJV1Cash
     os.environ['NET'] = 'testnet'
     e = Env()
-    assert e.coin == lib_coins.BitcoinCashTestnet
+    assert e.coin == lib_coins.XRJV1CashTestnet
     os.environ['NET'] = ' testnet '
     e = Env()
-    assert e.coin == lib_coins.BitcoinCashTestnet
+    assert e.coin == lib_coins.XRJV1CashTestnet
     os.environ.pop('NET')
     os.environ['COIN'] = ' Litecoin '
     e = Env()
@@ -92,16 +92,6 @@ def test_COIN_NET():
     os.environ['NET'] = 'testnet'
     e = Env()
     assert e.coin == lib_coins.LitecoinTestnet
-    os.environ.pop('NET')
-    os.environ['COIN'] = ' BitcoinGold '
-    e = Env()
-    assert e.coin == lib_coins.BitcoinGold
-    os.environ['NET'] = 'testnet'
-    e = Env()
-    assert e.coin == lib_coins.BitcoinGoldTestnet
-    os.environ['NET'] = 'regtest'
-    e = Env()
-    assert e.coin == lib_coins.BitcoinGoldRegtest
 
 def test_CACHE_MB():
     assert_integer('CACHE_MB', 'cache_MB', 1200)
@@ -130,7 +120,7 @@ def test_RPC_HOST():
 
 def test_REORG_LIMIT():
     assert_integer('REORG_LIMIT', 'reorg_limit',
-                   lib_coins.BitcoinCash.REORG_LIMIT)
+                   lib_coins.XRJV1Cash.REORG_LIMIT)
 
 def test_TCP_PORT():
     assert_integer('TCP_PORT', 'tcp_port', None)
@@ -151,7 +141,7 @@ def test_SSL_PORT():
     assert_integer('SSL_PORT', 'ssl_port', None)
 
 def test_RPC_PORT():
-    assert_integer('RPC_PORT', 'rpc_port', 8000)
+    assert_integer('RPC_PORT', 'rpc_port', 9891)
 
 def test_MAX_SUBSCRIPTIONS():
     assert_integer('MAX_SUBSCRIPTIONS', 'max_subscriptions', 10000)

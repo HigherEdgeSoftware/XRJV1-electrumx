@@ -122,7 +122,7 @@ block and transaction hashes, when converting the big-endian binary
 hash to a hexadecimal string the least-significant byte appears first,
 and the most-significant byte last.
 
-For example, the legacy Bitcoin address from the genesis block::
+For example, the legacy XRJV1 address from the genesis block::
 
     1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
 

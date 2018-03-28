@@ -35,7 +35,6 @@ import re
 import struct
 from decimal import Decimal
 from hashlib import sha256
-from functools import partial
 
 import lib.util as util
 from lib.hash import Base58, hash160, double_sha256, hash_to_str
@@ -74,7 +73,7 @@ class Coin(object):
     ENCODE_CHECK = Base58.encode_check
     DECODE_CHECK = Base58.decode_check
     # Peer discovery
-    PEER_DEFAULT_PORTS = {'t': '50001', 's': '50002'}
+    PEER_DEFAULT_PORTS = {'t': '4191', 's': '4192'}
     PEERS = []
 
     @classmethod
@@ -154,7 +153,7 @@ class Coin(object):
     @staticmethod
     def lookup_xverbytes(verbytes):
         '''Return a (is_xpub, coin_class) pair given xpub/xprv verbytes.'''
-        # Order means BTC testnet will override NMC testnet
+        # Order means XRJ testnet will override NMC testnet
         for coin in util.subclasses(Coin):
             if verbytes == coin.XPUB_VERBYTES:
                 return True, coin
@@ -280,7 +279,7 @@ class Coin(object):
         '''Return the number of standard coin units as a Decimal given a
         quantity of smallest units.
 
-        For example 1 BTC is returned for 100 million satoshis.
+        For example 1 XRJ is returned for 100 million satoshis.
         '''
         return Decimal(value) / cls.VALUE_PER_COIN
 
@@ -371,8 +370,8 @@ class KomodoMixin(object):
     DESERIALIZER = lib_tx.DeserializerZcash
 
 
-class BitcoinMixin(object):
-    SHORTNAME = "BTC"
+class XRJV1Mixin(object):
+    SHORTNAME = "XRJ"
     NET = "mainnet"
     XPUB_VERBYTES = bytes.fromhex("0488b21e")
     XPRV_VERBYTES = bytes.fromhex("0488ade4")
@@ -399,8 +398,8 @@ class HOdlcoin(Coin):
     TX_PER_BLOCK = 5
 
 
-class BitcoinCash(BitcoinMixin, Coin):
-    NAME = "BitcoinCash"
+class XRJV1Cash(XRJV1Mixin, Coin):
+    NAME = "XRJV1Cash"
     SHORTNAME = "BCC"
     TX_COUNT = 243631085
     TX_COUNT_HEIGHT = 479636
@@ -409,7 +408,6 @@ class BitcoinCash(BitcoinMixin, Coin):
         'electrum-abc.criptolayer.net s50012',
         'electroncash.cascharia.com s50002',
         'bch.arihanc.com t52001 s52002',
-        'bccarihace4jdcnt.onion t52001 s52002',
         'jelectrum-cash.1209k.com s t',
         'abc.vom-stausee.de t52001 s52002',
         'abc1.hsmiths.com t60001 s60002',
@@ -417,14 +415,14 @@ class BitcoinCash(BitcoinMixin, Coin):
     ]
 
 
-class BitcoinSegwit(BitcoinMixin, Coin):
-    NAME = "BitcoinSegwit"
+class XRJV1Segwit(XRJV1Mixin, Coin):
+    NAME = "XRJV1Segwit"
     DESERIALIZER = lib_tx.DeserializerSegWit
     TX_COUNT = 217380620
     TX_COUNT_HEIGHT = 464000
     TX_PER_BLOCK = 1800
     PEERS = [
-        'btc.smsys.me s995',
+        'xrj.smsys.me s995',
         'E-X.not.fyi s t',
         'elec.luggs.co s443',
         'electrum.vom-stausee.de s t',
@@ -437,14 +435,25 @@ class BitcoinSegwit(BitcoinMixin, Coin):
         'ozahtqwp25chjdjd.onion s t',
         'us11.einfachmalnettsein.de s t',
         'ELEX01.blackpole.online s t',
-        'node.arihanc.com s t',
-        'arihancckjge66iv.onion s t',
+    ]
+
+class XRJV1(XRJV1Mixin, Coin):
+    NAME = "XRJV1"
+    DESERIALIZER = lib_tx.DeserializerSegWit
+    TX_COUNT = 10
+    TX_COUNT_HEIGHT = 3926
+    TX_PER_BLOCK = 50
+    RPC_PORT = 9891
+    GENESIS_HASH = ('0000000032d2713b6088fd4f564fe55f'
+                    '771d854c4587448bc6fb11abaf7c6bd7')
+    PEERS = [
+        'xrjv1electrum1.radjav.com s41292 t41291', 
+        'xrjv1electrum2.radjav.com s41292 t41291'
     ]
 
 
-class BitcoinGold(EquihashMixin, BitcoinMixin, Coin):
-    CHUNK_SIZE = 252
-    NAME = "BitcoinGold"
+class XRJV1Gold(EquihashMixin, XRJV1Mixin, Coin):
+    NAME = "XRJV1Gold"
     SHORTNAME = "BTG"
     FORK_HEIGHT = 491407
     P2PKH_VERBYTE = bytes.fromhex("26")
@@ -454,7 +463,6 @@ class BitcoinGold(EquihashMixin, BitcoinMixin, Coin):
     TX_COUNT_HEIGHT = 499923
     TX_PER_BLOCK = 50
     REORG_LIMIT = 1000
-    RPC_PORT = 8338
 
     @classmethod
     def header_hash(cls, header):
@@ -465,54 +473,6 @@ class BitcoinGold(EquihashMixin, BitcoinMixin, Coin):
             return double_sha256(header)
         else:
             return double_sha256(header[:68] + header[100:112])
-
-    @classmethod
-    def electrum_header(cls, header, height):
-        h = dict(
-            block_height=height,
-            version=struct.unpack('<I', header[:4])[0],
-            prev_block_hash=hash_to_str(header[4:36]),
-            merkle_root=hash_to_str(header[36:68]),
-            timestamp=struct.unpack('<I', header[100:104])[0],
-            reserved=hash_to_str(header[72:100]),
-            bits=struct.unpack('<I', header[104:108])[0],
-            nonce=hash_to_str(header[108:140]),
-            solution=hash_to_str(header[140:])
-        )
-
-        return h
-
-
-class BitcoinGoldTestnet(BitcoinGold):
-    FORK_HEIGHT = 1
-    SHORTNAME = "TBTG"
-    XPUB_VERBYTES = bytes.fromhex("043587CF")
-    XPRV_VERBYTES = bytes.fromhex("04358394")
-    P2PKH_VERBYTE = bytes.fromhex("6F")
-    P2SH_VERBYTES = [bytes.fromhex("C4")]
-    WIF_BYTE = bytes.fromhex("EF")
-    TX_COUNT = 0
-    TX_COUNT_HEIGHT = 1
-    NET = 'testnet'
-    RPC_PORT = 18338
-    GENESIS_HASH = ('00000000e0781ebe24b91eedc293adfe'
-                    'a2f557b53ec379e78959de3853e6f9f6')
-
-
-class BitcoinGoldRegtest(BitcoinGold):
-    FORK_HEIGHT = 2000
-    SHORTNAME = "TBTG"
-    XPUB_VERBYTES = bytes.fromhex("043587CF")
-    XPRV_VERBYTES = bytes.fromhex("04358394")
-    P2PKH_VERBYTE = bytes.fromhex("6F")
-    P2SH_VERBYTES = [bytes.fromhex("C4")]
-    WIF_BYTE = bytes.fromhex("EF")
-    TX_COUNT = 0
-    TX_COUNT_HEIGHT = 1
-    NET = 'regtest'
-    RPC_PORT = 18444
-    GENESIS_HASH = ('0f9188f13cb7b2c71f2a335e3a4fc328'
-                    'bf5beb436012afca590b1a11466e2206')
 
 
 class Emercoin(Coin):
@@ -551,7 +511,7 @@ class Emercoin(Coin):
         return double_sha256(header[:cls.BASIC_HEADER_SIZE])
 
 
-class BitcoinTestnetMixin(object):
+class XRJV1TestnetMixin(object):
     SHORTNAME = "XTN"
     NET = "testnet"
     XPUB_VERBYTES = bytes.fromhex("043587cf")
@@ -569,19 +529,17 @@ class BitcoinTestnetMixin(object):
     PEER_DEFAULT_PORTS = {'t': '51001', 's': '51002'}
 
 
-class BitcoinCashTestnet(BitcoinTestnetMixin, Coin):
-    '''Bitcoin Testnet for Bitcoin Cash daemons.'''
-    NAME = "BitcoinCash"
+class XRJV1CashTestnet(XRJV1TestnetMixin, Coin):
+    '''XRJV1 Testnet for XRJV1 Cash daemons.'''
+    NAME = "XRJV1Cash"
     PEERS = [
         'electrum-testnet-abc.criptolayer.net s50112',
-        'bchtestnet.arihanc.com t53001 s53002',
-        'ciiattqkgzebpp6jofjbrkhvhwmgnsfoayljdcrve2p3qmkbv3duaoyd.onion t53001 s53002',     
     ]
 
 
-class BitcoinSegwitTestnet(BitcoinTestnetMixin, Coin):
-    '''Bitcoin Testnet for Core bitcoind >= 0.13.1.'''
-    NAME = "BitcoinSegwit"
+class XRJV1SegwitTestnet(XRJV1TestnetMixin, Coin):
+    '''XRJV1 Testnet for Core xrjv1d >= 0.13.1.'''
+    NAME = "XRJV1Segwit"
     DESERIALIZER = lib_tx.DeserializerSegWit
     PEERS = [
         'electrum.akinbo.org s t',
@@ -589,12 +547,16 @@ class BitcoinSegwitTestnet(BitcoinTestnetMixin, Coin):
         'testnet.hsmiths.com t53011 s53012',
         'hsmithsxurybd7uh.onion t53011 s53012',
         'testnetnode.arihanc.com s t',
-        'w3e2orjpiiv2qwem3dw66d7c4krink4nhttngkylglpqe5r22n6n5wid.onion s t', 
     ]
 
 
-class BitcoinSegwitRegtest(BitcoinSegwitTestnet):
-    NAME = "BitcoinSegwit"
+class XRJV1GoldTestnet(XRJV1TestnetMixin, XRJV1Gold):
+    NAME = "XRJV1Gold"
+    FORK_HEIGHT = 1210320
+
+
+class XRJV1SegwitRegtest(XRJV1SegwitTestnet):
+    NAME = "XRJV1Segwit"
     NET = "regtest"
     GENESIS_HASH = ('0f9188f13cb7b2c71f2a335e3a4fc328'
                     'bf5beb436012afca590b1a11466e2206')
@@ -603,8 +565,8 @@ class BitcoinSegwitRegtest(BitcoinSegwitTestnet):
     TX_COUNT_HEIGHT = 1
 
 
-class BitcoinNolnet(BitcoinCash):
-    '''Bitcoin Unlimited nolimit testnet.'''
+class XRJV1Nolnet(XRJV1Cash):
+    '''XRJV1 Unlimited nolimit testnet.'''
     NET = "nolnet"
     GENESIS_HASH = ('0000000057e31bd2066c939a63b7b862'
                     '3bd0f10d8c001304bdfc1a7902ae6d35')
@@ -621,8 +583,8 @@ class Litecoin(Coin):
     NAME = "Litecoin"
     SHORTNAME = "LTC"
     NET = "mainnet"
-    XPUB_VERBYTES = bytes.fromhex("0488b21e")
-    XPRV_VERBYTES = bytes.fromhex("0488ade4")
+    XPUB_VERBYTES = bytes.fromhex("019d9cfe")
+    XPRV_VERBYTES = bytes.fromhex("019da462")
     P2PKH_VERBYTE = bytes.fromhex("30")
     P2SH_VERBYTES = [bytes.fromhex("32"), bytes.fromhex("05")]
     WIF_BYTE = bytes.fromhex("b0")
@@ -648,8 +610,8 @@ class Litecoin(Coin):
 class LitecoinTestnet(Litecoin):
     SHORTNAME = "XLT"
     NET = "testnet"
-    XPUB_VERBYTES = bytes.fromhex("043587cf")
-    XPRV_VERBYTES = bytes.fromhex("04358394")
+    XPUB_VERBYTES = bytes.fromhex("0436ef7d")
+    XPRV_VERBYTES = bytes.fromhex("0436f6e1")
     P2PKH_VERBYTE = bytes.fromhex("6f")
     P2SH_VERBYTES = [bytes.fromhex("3a"), bytes.fromhex("c4")]
     WIF_BYTE = bytes.fromhex("ef")
@@ -950,9 +912,9 @@ class SnowGem(EquihashMixin, Coin):
     RPC_PORT = 16112
     REORG_LIMIT = 800
 
-class BitcoinZ(EquihashMixin, Coin):
-    NAME = "BitcoinZ"
-    SHORTNAME = "BTCZ"
+class XRJV1Z(EquihashMixin, Coin):
+    NAME = "XRJV1Z"
+    SHORTNAME = "XRJZ"
     NET = "mainnet"
     P2PKH_VERBYTE = bytes.fromhex("1CB8")
     P2SH_VERBYTES = [bytes.fromhex("1CBD")]
@@ -1013,10 +975,6 @@ class Koto(Coin):
     TX_PER_BLOCK = 3
     RPC_PORT = 8432
     REORG_LIMIT = 800
-    PEERS = [
-        'fr.kotocoin.info s t',
-        'electrum.kotocoin.info s t',
-    ]
 
 class Komodo(KomodoMixin, EquihashMixin, Coin):
     NAME = "Komodo"
@@ -1084,6 +1042,7 @@ class Bitbay(ScryptMixin, Coin):
     WIF_BYTE = bytes.fromhex("99")
     GENESIS_HASH = ('0000075685d3be1f253ce777174b1594'
                     '354e79954d2a32a6f77fe9cba00e6467')
+    DAEMON = daemon.LegacyRPCDaemon
     TX_COUNT = 4594999
     TX_COUNT_HEIGHT = 1667070
     TX_PER_BLOCK = 3
@@ -1170,7 +1129,7 @@ class Monacoin(Coin):
         'electrumx1.monacoin.ninja s t',
         'electrumx2.monacoin.ninja s t',
         'electrumx1.movsign.info t',
-        'electrumx2.movsign.info s t',
+        'electrumx2.movsign.info t',
         'electrum-mona.bitbank.cc s t',
     ]
 
@@ -1425,7 +1384,7 @@ class Newyorkcoin(AuxPowMixin, Coin):
     TX_PER_BLOCK = 2
     REORG_LIMIT = 2000
 
-class Bitcore(BitcoinMixin, Coin):
+class Bitcore(XRJV1Mixin, Coin):
     NAME = "Bitcore"
     SHORTNAME = "BTX"
     DESERIALIZER = lib_tx.DeserializerSegWit
@@ -1437,8 +1396,8 @@ class Bitcore(BitcoinMixin, Coin):
     RPC_PORT = 8556
 
 
-class BitcoinAtom(Coin):
-    NAME = "BitcoinAtom"
+class XRJV1Atom(Coin):
+    NAME = "XRJV1Atom"
     SHORTNAME = "BCA"
     NET = "mainnet"
     P2PKH_VERBYTE = bytes.fromhex("17")
@@ -1447,7 +1406,7 @@ class BitcoinAtom(Coin):
     GENESIS_HASH = ('000000000019d6689c085ae165831e93'
                     '4ff763ae46a2a6c172b3f1b60a8ce26f')
     STATIC_BLOCK_HEADERS = False
-    DESERIALIZER = lib_tx.DeserializerBitcoinAtom
+    DESERIALIZER = lib_tx.DeserializerXRJV1Atom
     HEADER_SIZE_POST_FORK = 84
     BLOCK_PROOF_OF_STAKE = 0x01
     BLOCK_PROOF_OF_STAKE_FLAGS = b'\x01\x00\x00\x00'
@@ -1475,54 +1434,3 @@ class BitcoinAtom(Coin):
         '''Return the block header bytes'''
         deserializer = cls.DESERIALIZER(block)
         return deserializer.read_header(height, cls.BASIC_HEADER_SIZE)
-
-
-class Decred(Coin):
-    NAME = "Decred"
-    SHORTNAME = "DCR"
-    NET = "mainnet"
-    XPUB_VERBYTES = bytes('dpub', 'utf-8')
-    XPRV_VERBYTES = bytes('dprv', 'utf-8')
-    P2PKH_VERBYTE = bytes('Ds', 'utf-8')
-    P2SH_VERBYTES = [bytes('Dc', 'utf-8')]
-    WIF_BYTE = bytes('Pm', 'utf-8')
-    GENESIS_HASH = ('298e5cc3d985bfe7f81dc135f360abe089edd4396b86d2de66b0cef42b21d980')
-    DESERIALIZER = lib_tx.DeserializerDecred
-    ENCODE_CHECK = partial(Base58.encode_check, hash_fn=lib_tx.DeserializerDecred.blake256)
-    DECODE_CHECK = partial(Base58.decode_check, hash_fn=lib_tx.DeserializerDecred.blake256)
-    HEADER_HASH = lib_tx.DeserializerDecred.blake256
-    BASIC_HEADER_SIZE = 180
-    ALLOW_ADVANCING_ERRORS = True
-    TX_COUNT = 217380620
-    TX_COUNT_HEIGHT = 218875
-    TX_PER_BLOCK = 1000
-    RPC_PORT = 9109
-
-    @classmethod
-    def header_hash(cls, header):
-        '''Given a header return the hash.'''
-        return cls.HEADER_HASH(header)
-
-    @classmethod
-    def block(cls, raw_block, height):
-        '''Return a Block namedtuple given a raw block and its height.'''
-        if height > 0:
-            return super().block(raw_block, height)
-        else:
-            return Block(raw_block, cls.block_header(raw_block, height), [])        
-
-
-class DecredTestnet(Decred):
-    NAME = "Decred"
-    NET = "testnet"
-    XPUB_VERBYTES = bytes('tpub', 'utf-8')
-    XPRV_VERBYTES = bytes('tprv', 'utf-8')
-    P2PKH_VERBYTE = bytes('Ts', 'utf-8')
-    P2SH_VERBYTES = [bytes('Tc', 'utf-8')]
-    WIF_BYTE = bytes('Pt', 'utf-8')
-    GENESIS_HASH = ('4261602a9d07d80ad47621a64ba6a07754902e496777edc4ff581946bd7bc29c')
-    TX_COUNT = 3176305
-    TX_COUNT_HEIGHT = 254198
-    TX_PER_BLOCK = 1000
-    RPC_PORT = 19109
-    

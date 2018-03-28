@@ -2,7 +2,7 @@ Features
 ========
 
 - Efficient, lightweight reimplementation of electrum-server
-- Fast synchronization of bitcoin mainnet from Genesis.  Recent
+- Fast synchronization of xrjv1 mainnet from Genesis.  Recent
   hardware should synchronize in well under 24 hours.  The fastest
   time to height 448k (mid January 2017) reported is under 4h 30m.  On
   the same hardware JElectrum would take around 4 days and

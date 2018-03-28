@@ -4,7 +4,7 @@ Protocol Methods
 blockchain.address.get_balance
 ------------------------------
 
-Return the confirmed and unconfirmed balances of a bitcoin address.
+Return the confirmed and unconfirmed balances of a xrjv1 address.
 
 **Signature**
 
@@ -22,7 +22,7 @@ Return the confirmed and unconfirmed balances of a bitcoin address.
 blockchain.address.get_history
 ------------------------------
 
-Return the confirmed and unconfirmed history of a bitcoin address.
+Return the confirmed and unconfirmed history of a xrjv1 address.
 
 **Signature**
 
@@ -40,7 +40,7 @@ Return the confirmed and unconfirmed history of a bitcoin address.
 blockchain.address.get_mempool
 ------------------------------
 
-Return the unconfirmed transactions of a bitcoin address.
+Return the unconfirmed transactions of a xrjv1 address.
 
 **Signature**
 
@@ -58,7 +58,7 @@ Return the unconfirmed transactions of a bitcoin address.
 blockchain.address.listunspent
 ------------------------------
 
-Return an ordered list of UTXOs sent to a bitcoin address.
+Return an ordered list of UTXOs sent to a xrjv1 address.
 
 **Signature**
 
@@ -76,7 +76,7 @@ Return an ordered list of UTXOs sent to a bitcoin address.
 blockchain.address.subscribe
 ----------------------------
 
-Subscribe to a bitcoin address.
+Subscribe to a xrjv1 address.
 
 **Signature**
 
@@ -139,10 +139,10 @@ Typically, a chunk consists of a fixed number of block headers over
 which difficulty is constant, and at the end of which difficulty is
 retargeted.
 
-In the case of Bitcoin a chunk is 2,016 headers, each of 80 bytes, so
+In the case of XRJV1 a chunk is 2,016 headers, each of 80 bytes, so
 chunk 5 consists of the block headers from height 10,080 to 12,095
 inclusive.  When encoded as hexadecimal, the result string is twice as
-long, so for Bitcoin it takes 322,560 bytes, making this a
+long, so for XRJV1 it takes 322,560 bytes, making this a
 bandwidth-intensive request.
 
 **Signature**
@@ -346,7 +346,7 @@ be accepted to the daemon's memory pool.
 
 **Result**
 
-  The fee in whole coin units (BTC, not satoshis for Bitcoin) as a
+  The fee in whole coin units (XRJ, not satoshis for XRJV1) as a
   floating point number.
 
 **Example Results**
@@ -573,7 +573,7 @@ Subscribe to a script hash.
   when the :ref:`status <status>` of the script hash changes.  Its
   signature is
 
-  .. function:: blockchain.scripthash.subscribe(scripthash, status)
+  .. function:: blockchain.scripthash.subscribe(address, status)
 
 blockchain.transaction.broadcast
 --------------------------------
@@ -957,8 +957,8 @@ Return a list of features and services supported by the server.
 server.peers.subscribe
 ----------------------
 
-Return a list of peer servers.  Despite the name this is not a
-subscription and the server must send no notifications.
+  Return a list of peer servers.  Despite the name this is not a
+  subscription and the server must send no notifications.
 
 **Signature**
 

@@ -50,7 +50,7 @@ def ripemd160(x):
 
 
 def double_sha256(x):
-    '''SHA-256 of SHA-256, as used extensively in bitcoin.'''
+    '''SHA-256 of SHA-256, as used extensively in xrjv1.'''
     return sha256(sha256(x))
 
 
@@ -62,7 +62,7 @@ def hmac_sha512(key, msg):
 def hash160(x):
     '''RIPEMD-160 of SHA-256.
 
-    Used to make bitcoin addresses from pubkeys.'''
+    Used to make xrjv1 addresses from pubkeys.'''
     return ripemd160(sha256(x))
 
 

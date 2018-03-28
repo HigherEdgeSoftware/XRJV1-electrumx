@@ -22,8 +22,8 @@ Version 1.3
   <https://electrumx.readthedocs.io/>`_.  Rewritten and improved
   protocol documentation.
 * new/updated coins: Chips (cipig), Feathercoin (lclc), Zclassic(heyrhett),
-  Dash (thelazier), NYC (xarakas), Koto (wo01), BitcoinZ (cipig), BitCore
-  (cipig), Fujicoin (fujicoin), Bitcoin Atom (erasmospunk), Deanrius (carsenk),
+  Dash (thelazier), NYC (xarakas), Koto (wo01), XRJV1Z (cipig), BitCore
+  (cipig), Fujicoin (fujicoin), XRJV1 Atom (erasmospunk), Deanrius (carsenk),
   SNG (blackjok3rtt).
 * Minor fixes and improvements: duckartes, blin00, bauerj,
   erasmospunk, SomberNight, romanz.
@@ -34,7 +34,7 @@ Version 1.2.1
 - remove IRC support.  Most coins had empty IRC channels.  Those that
   don't have peers populated.
 - use estimatesmartfee RPC call if available (SomberNight)
-- new/updated coins: Emercoin (Sergii Vakula), Bitcoin Gold (erasmospunk),
+- new/updated coins: Emercoin (Sergii Vakula), XRJV1 Gold (erasmospunk),
   Monacoin testnet (Wakiyama P), sibcoin (53r63rn4r), Komodo and Monaize
   (cipig), Hush (Duke Leto)
 - doc updates (fr3aker)
@@ -49,9 +49,9 @@ Version 1.2
   spends correctly and now the protocol admits subscriptions by script
   hash there is no need to have these merged any more.
 
-For Bitcoin (BitcoinSegwit/mainnet) you can download a leveldb database
+For XRJV1 (XRJV1Segwit/mainnet) you can download a leveldb database
 synced up to block 490153 using this bittorrent magnet
-`link (~24GB) <magnet:?xt=urn:btih:caa804f48a319b061be3884ac011656c27121a6f&dn=electrumx_1.2_btc_leveldb_490153>`_.
+`link (~24GB) <magnet:?xt=urn:btih:caa804f48a319b061be3884ac011656c27121a6f&dn=electrumx_1.2_xrj_leveldb_490153>`_.
 
 Version 1.1.2
 -------------
@@ -64,7 +64,7 @@ Version 1.1.2
 - improved environment variable handling
 - EMC2 update (cipig), Monacoin update (cryptocoin-junkey),
   Canada Ecoin (koad)
-- typo fixes, Bitcoin testnet peers updates (SomberNight)
+- typo fixes, XRJV1 testnet peers updates (SomberNight)
 
 Version 1.1.1
 -------------
@@ -80,8 +80,8 @@ Version 1.1
 -----------
 
 See the changelogs below for recent changes.  The most important is
-that for mainnet bitcoin **NET** must now be *mainnet* and you must
-choose a **COIN** from *BitcoinCash* and *BitcoinSegwit*.  Similarly
+that for mainnet xrjv1 **NET** must now be *mainnet* and you must
+choose a **COIN** from *XRJV1Cash* and *XRJV1Segwit*.  Similarly
 for testnets.  These coins will likely diverge further in future so
 it's best they become separate coins now.
 

@@ -19,7 +19,7 @@ def set_env():
     env.identities = ''
     env.tor_proxy_host = env.tor_proxy_port = None
     env.peer_discovery = env.PD_SELF = False
-    env.daemon_url = 'http://localhost:8000/'
+    env.daemon_url = 'http://localhost:9891/'
     return env
 
 

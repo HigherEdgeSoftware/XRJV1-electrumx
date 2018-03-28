@@ -4,7 +4,7 @@
 ###############
 
 # configure electrumx
-export COIN=Bitcoin
+export COIN=XRJV1
 export DAEMON_URL=http://rpcuser:rpcpassword@127.0.0.1
 export NET=mainnet
 export CACHE_MB=400
@@ -16,12 +16,12 @@ export DONATION_ADDRESS=your-donation-address
 
 # connectivity
 export HOST=
-export TCP_PORT=50001
-export SSL_PORT=50002
+export TCP_PORT=4191
+export SSL_PORT=4192
 
 # visibility
 export REPORT_HOST=hostname.com
-export RPC_PORT=8000
+export RPC_PORT=9891
 
 # run electrumx
 ulimit -n 10000

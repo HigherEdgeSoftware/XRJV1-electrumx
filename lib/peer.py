@@ -36,15 +36,14 @@ class Peer(object):
     # Protocol version
     ATTRS = ('host', 'features',
              # metadata
-             'source', 'ip_addr',
+             'source', 'ip_addr', 'good_ports',
              'last_good', 'last_try', 'try_count')
-    FEATURES = ('pruning', 'server_version', 'protocol_min', 'protocol_max',
-                'ssl_port', 'tcp_port')
+    FEATURES = ('pruning', 'server_version', 'protocol_min', 'protocol_max')
     # This should be set by the application
     DEFAULT_PORTS = {}
 
     def __init__(self, host, features, source='unknown', ip_addr=None,
-                 last_good=0, last_try=0, try_count=0):
+                 good_ports=[], last_good=0, last_try=0, try_count=0):
         '''Create a peer given a host name (or IP address as a string),
         a dictionary of features, and a record of the source.'''
         assert isinstance(host, str)
@@ -58,6 +57,7 @@ class Peer(object):
         # Metadata
         self.source = source
         self.ip_addr = ip_addr
+        self.good_ports = good_ports.copy()
         # last_good represents the last connection that was
         # successful *and* successfully verified, at which point
         # try_count is set to 0.  Failure to connect or failure to

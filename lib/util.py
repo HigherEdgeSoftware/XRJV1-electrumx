@@ -158,7 +158,7 @@ def int_to_bytes(value):
 
 
 def int_to_varint(value):
-    '''Converts an integer to a Bitcoin-like varint bytes'''
+    '''Converts an integer to a XRJV1-like varint bytes'''
     if value < 0:
         raise ValueError("attempt to write size < 0")
     elif value < 253:

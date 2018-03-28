@@ -202,7 +202,7 @@ class PrivKey(_KeyBase):
     @classmethod
     def from_seed(cls, seed):
         # This hard-coded message string seems to be coin-independent...
-        hmac = hmac_sha512(b'Bitcoin seed', seed)
+        hmac = hmac_sha512(b'XRJV1 seed', seed)
         privkey, chain_code = hmac[:32], hmac[32:]
         return cls(privkey, chain_code, 0, 0)
 

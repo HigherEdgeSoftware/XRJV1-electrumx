@@ -168,7 +168,7 @@ class ScriptPubKey(object):
                               .format(m, n))
         for pubkey in pubkeys:
             cls.validate_pubkey(pubkey, req_compressed=True)
-        # See https://bitcoin.org/en/developer-guide
+        # See https://xrjv1.org/en/developer-guide
         # 2 of 3 is: OP_2 pubkey1 pubkey2 pubkey3 OP_3 OP_CHECKMULTISIG
         return (bytes([OP_1 + m - 1])
                 + b''.join(cls.push_data(pubkey) for pubkey in pubkeys)

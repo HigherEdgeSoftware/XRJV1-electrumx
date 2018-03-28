@@ -26,39 +26,34 @@ class EnvBase(lib_util.LoggedClass):
         self.rpc_host = self.default('RPC_HOST', 'localhost')
         self.loop_policy = self.event_loop_policy()
 
-    @classmethod
-    def default(cls, envvar, default):
+    def default(self, envvar, default):
         return environ.get(envvar, default)
 
-    @classmethod
-    def boolean(cls, envvar, default):
+    def boolean(self, envvar, default):
         default = 'Yes' if default else ''
-        return bool(cls.default(envvar, default).strip())
+        return bool(self.default(envvar, default).strip())
 
-    @classmethod
-    def required(cls, envvar):
+    def required(self, envvar):
         value = environ.get(envvar)
         if value is None:
-            raise cls.Error('required envvar {} not set'.format(envvar))
+            raise self.Error('required envvar {} not set'.format(envvar))
         return value
 
-    @classmethod
-    def integer(cls, envvar, default):
+    def integer(self, envvar, default):
         value = environ.get(envvar)
         if value is None:
             return default
         try:
             return int(value)
         except Exception:
-            raise cls.Error('cannot convert envvar {} value {} to an integer'
-                            .format(envvar, value))
+            raise self.Error('cannot convert envvar {} value {} to an integer'
+                             .format(envvar, value))
 
-    @classmethod
-    def obsolete(cls, envvars):
+    def obsolete(self, envvars):
         bad = [envvar for envvar in envvars if environ.get(envvar)]
         if bad:
-            raise cls.Error('remove obsolete environment variables {}'
-                            .format(bad))
+            raise self.Error('remove obsolete environment variables {}'
+                             .format(bad))
 
     def event_loop_policy(self):
         policy = self.default('EVENT_LOOP_POLICY', None)

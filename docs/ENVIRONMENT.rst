@@ -1,5 +1,3 @@
-.. _environment:
-
 =====================
 Environment Variables
 =====================
@@ -66,16 +64,9 @@ Miscellaneous
 
 These environment variables are optional:
 
-* **LOG_FORMAT**
-
-  The Python logging `format string
-  <https://docs.python.org/3/library/logging.html#logrecord-attributes>`_
-  to use.  Defaults to `%(levelname)s:%(name)s:%(message)s`.
-
 * **ALLOW_ROOT**
 
-  Set this environment variable to anything non-empty to allow running
-  ElectrumX as root.
+  Set this environment variable to anything non-empty to allow running ElectrumX as root.
 
 * **NET**
 
@@ -130,8 +121,8 @@ These environment variables are optional:
 
   ElectrumX will listen on this port for local RPC connections.
   ElectrumX listens for RPC connections unless this is explicitly set
-  to blank.  The default depends on **COIN** and **NET** (e.g., 8000
-  for Bitcoin mainnet) if not set, as indicated in `lib/coins.py`_.
+  to blank.  The default depends on **COIN** and **NET** (e.g., 9891
+  for XRJV1 mainnet) if not set, as indicated in `lib/coins.py`_.
 
 * **DONATION_ADDRESS**
 
@@ -154,7 +145,7 @@ These environment variables are optional:
   + **$DAEMON_VERSION** is replaced with the daemon's version as a
     dot-separated string. For example *0.12.1*.
   + **$DAEMON_SUBVERSION** is replaced with the daemon's user agent
-    string.  For example, `/BitcoinUnlimited:0.12.1(EB16; AD4)/`.
+    string.  For example, `/XRJV1Unlimited:0.12.1(EB16; AD4)/`.
   + **$DONATION_ADDRESS** is replaced with the address from the
     **DONATION_ADDRESS** environment variable.
 
@@ -185,7 +176,7 @@ These environment variables are optional:
   The maximum number of blocks to be able to handle in a chain
   reorganisation.  ElectrumX retains some fairly compact undo
   information for this many blocks in levelDB.  The default is a
-  function of **COIN** and **NET**; for Bitcoin mainnet it is 200.
+  function of **COIN** and **NET**; for XRJV1 mainnet it is 200.
 
 * **EVENT_LOOP_POLICY**
 
@@ -230,7 +221,7 @@ raise them.
   for multiple addresses.  Also note that the largest raw transaction
   you will be able to serve to a client is just under half of
   MAX_SEND, as each raw byte becomes 2 hexadecimal ASCII characters on
-  the wire.  Very few transactions on Bitcoin mainnet are over 500KB
+  the wire.  Very few transactions on XRJV1 mainnet are over 500KB
   in size.
 
 * **MAX_SUBS**
@@ -384,8 +375,6 @@ the Python process is often quite a bit fatter than the cache size,
 because of Python overhead and also because leveldb consumes a lot of
 memory when flushing.  So I recommend you do not set this over 60% of
 your available physical RAM:
-
-.. _CACHE:
 
 * **CACHE_MB**
 

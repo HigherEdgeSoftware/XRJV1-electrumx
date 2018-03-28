@@ -44,7 +44,7 @@ class Daemon(LoggedClass):
         self._mempool_hashes = set()
         self.mempool_refresh_event = asyncio.Event()
         # Limit concurrent RPC calls to this number.
-        # See DEFAULT_HTTP_WORKQUEUE in bitcoind, which is typically 16
+        # See DEFAULT_HTTP_WORKQUEUE in xrjv1d, which is typically 16
         self.workqueue_semaphore = asyncio.Semaphore(value=10)
         self.down = False
         self.last_error_time = 0
@@ -97,7 +97,7 @@ class Daemon(LoggedClass):
         async with self.workqueue_semaphore:
             async with self.client_session() as session:
                 async with session.post(self.url(), data=data) as resp:
-                    # If bitcoind can't find a tx, for some reason
+                    # If xrjv1d can't find a tx, for some reason
                     # it returns 500 but fills out the JSON.
                     # Should still return 200 IMO.
                     if resp.status in (200, 404, 500):
